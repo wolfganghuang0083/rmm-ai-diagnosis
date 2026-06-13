@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 導入準備度自我診斷表｜RunningMate 電商陪跑社</title>
+<style>
+:root{--blue:#10a0ff;--navy:#003362;--soft:#e5f2ff;--ink:#1c2b36}
+*{box-sizing:border-box}
+body{font-family:"Rubik",-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:linear-gradient(160deg,#f4f9ff,#eaf3ff);color:var(--ink);line-height:1.7}
+.wrap{max-width:680px;margin:0 auto;padding:24px 16px 80px}
+.card{background:#fff;border:1px solid #e0e8f0;border-radius:16px;box-shadow:0 8px 30px rgba(0,51,98,.06);padding:26px 22px;margin-top:18px}
+h1{color:var(--navy);font-size:23px;margin:0 0 6px}
+.lede{color:#46586a;font-size:14.5px}
+.bar{height:8px;background:#e6eef6;border-radius:99px;overflow:hidden;margin:18px 0 6px}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--navy));transition:width .35s}
+.pct{font-size:12.5px;color:#7388a0;text-align:right}
+.q{font-weight:600;color:var(--navy);font-size:17px;margin:4px 0 14px}
+.opt{display:block;border:1.5px solid #dde7f1;border-radius:11px;padding:13px 15px;margin:9px 0;cursor:pointer;font-size:15px;transition:.15s;background:#fbfdff}
+.opt:hover{border-color:var(--blue);background:var(--soft)}
+.opt.sel{border-color:var(--blue);background:var(--soft);box-shadow:0 0 0 2px rgba(16,160,255,.18)}
+.dim{display:inline-block;background:var(--soft);color:var(--navy);font-size:12px;font-weight:600;padding:3px 11px;border-radius:99px;margin-bottom:10px}
+.nav{display:flex;justify-content:space-between;margin-top:18px;gap:10px}
+button{font-family:inherit;border:0;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;padding:12px 22px}
+.prev{background:#eef3f8;color:#5a6b7a}
+.next{background:var(--blue);color:#fff;flex:1}
+.next:disabled{opacity:.4;cursor:not-allowed}
+input[type=email],input[type=text]{width:100%;padding:13px 14px;border:1.5px solid #cbd8e6;border-radius:10px;font-size:15px;font-family:inherit;margin:6px 0}
+.consent{font-size:12.5px;color:#6a7c8e;display:flex;gap:8px;align-items:flex-start;margin:10px 0}
+.lvl{font-size:28px;font-weight:800;color:var(--navy)}
+.score{color:var(--blue)}
+.radar .row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13.5px}
+.radar .lab{width:104px;color:#46586a;flex:none}
+.radar .track{flex:1;height:10px;background:#e6eef6;border-radius:99px;overflow:hidden}
+.radar .fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--navy))}
+.cta{background:var(--navy);color:#fff;border-radius:14px;padding:20px;margin-top:18px}
+.cta a.btn{display:inline-block;background:var(--blue);color:#fff;text-decoration:none;padding:12px 24px;border-radius:10px;font-weight:700;margin-top:10px}
+.cta a.sub{color:#bfe2ff;font-size:13px}
+.hide{display:none}
+.muted{color:#7388a0;font-size:12.5px}
+</style></head><body>
+<div class="wrap">
+  <div class="card">
+    <span class="dim" id="dimTag">開始之前</span>
+    <h1 id="qTitle">AI 導入準備度自我診斷表</h1>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="pct" id="pct">5 分鐘 · 15 題</div>
+
+    <!-- 開始畫面 -->
+    <div id="intro">
+      <p class="lede">這不是工具教學，而是先盤點你的<b>生意現況</b>——因為導 AI 的順序，永遠是「先懂流程，再談工具」。沒有標準答案，只有「現在最適合你的下一步」。</p>
+      <p class="lede">填完你會得到：一份對應你分數的 <b>AI 導入準備度等級</b>、五個面向的強弱、以及<b>下一步具體建議</b>。</p>
+      <div class="nav"><button class="next" onclick="start()">開始診斷 →</button></div>
+    </div>
+
+    <!-- 題目畫面 -->
+    <div id="quiz" class="hide">
+      <div class="q" id="qText"></div>
+      <div id="opts"></div>
+      <div class="nav">
+        <button class="prev" id="prevBtn" onclick="go(-1)">← 上一題</button>
+        <button class="next" id="nextBtn" onclick="go(1)" disabled>下一題 →</button>
+      </div>
+    </div>
+
+    <!-- Email 收集畫面 -->
+    <div id="gate" class="hide">
+      <span class="dim">最後一步</span>
+      <div class="q">填完了！告訴我們把完整結果寄到哪裡 📩</div>
+      <p class="lede">下方會立刻顯示你的等級與下一步重點；我們也會把<b>完整的五面向細解＋對應你狀態的行動建議</b>寄到你的信箱。</p>
+      <input type="text" id="name" placeholder="你的稱呼（選填）">
+      <input type="email" id="email" placeholder="你的 Email（必填）" oninput="checkEmail()">
+      <input type="text" id="company" placeholder="公司／品牌名稱（選填）">
+      <label class="consent"><input type="checkbox" id="agree" onchange="checkEmail()"><span>我同意 RunningMate 電商陪跑社寄送診斷結果與相關電子報，並了解可隨時取消訂閱。</span></label>
+      <div class="nav">
+        <button class="prev" onclick="backToQuiz()">← 回上一題</button>
+        <button class="next" id="seeBtn" onclick="submit()" disabled>看我的結果 →</button>
+      </div>
+      <p class="muted" id="sendMsg"></p>
+    </div>
+
+    <!-- 結果畫面 -->
+    <div id="result" class="hide">
+      <span class="dim">你的診斷結果</span>
+      <div class="lvl">AI 導入準備度：<span id="lvlName"></span></div>
+      <div class="lede"><span class="score" id="scoreNum"></span> ／ 45 分</div>
+      <div class="radar" id="radar" style="margin:16px 0"></div>
+      <div class="q" style="font-size:15px;margin-top:8px">你現在的狀態</div>
+      <p class="lede" id="stateTxt"></p>
+      <div class="q" style="font-size:15px">你的下一步建議</div>
+      <p class="lede" id="nextTxt"></p>
+      <p class="lede" style="border-top:1px solid #eef3f8;padding-top:14px">這份診斷給的是方向，不是答案。真正的關鍵在於：<b>用對順序、從對的那一段開始。</b> RunningMate 的做法不是丟一份報告就走，也不是把你的事全包過去——而是先懂你的生意，再帶著你和團隊一起做，讓能力長在公司裡。</p>
+      <div class="cta">
+        <div style="font-size:17px;font-weight:700">想知道「以你目前的狀態，第一步具體該做什麼」？</div>
+        <div style="font-size:14px;color:#cfe9ff;margin-top:6px">預約一次免費諮詢，我們先聊聊你的生意，再談要不要、怎麼導 AI。</div>
+        <a class="btn" id="ctaLink" href="https://runningmatemarketing.com/consulting/?utm_source=ai_diagnosis&utm_medium=lead_magnet&utm_campaign=ai_readiness">預約諮詢 →</a>
+        <div style="margin-top:12px"><a class="sub" href="https://runningmatemarketing.com/blog/2023/12/05/racae-cycle-%e5%84%aa%e5%8c%96%e5%be%aa%e7%92%b0%e7%90%86%e8%ab%96-%e9%87%8d%e5%a1%91%e4%bc%81%e6%a5%ad%e5%b9%b4%e5%ba%a6%e7%9b%ae%e6%a8%99%e8%a6%8f%e5%8a%83/">先讀懂 RACAE 優化循環</a> ｜ <a class="sub" href="https://runningmatemarketing.com/blog/2026/06/02/enterprise-ai-coaching/">了解企業 AI 陪跑</a></div>
+      </div>
+    </div>
+  </div>
+  <p class="muted" style="text-align:center">RunningMate 電商陪跑社 · 教練式陪跑，先懂生意再導 AI</p>
+</div>
+
+<script>
+// ====== 後端收集端點：填入既有 Apps Script /exec（或新建診斷後端）後即生效 ======
+const ENDPOINT = "https://script.google.com/macros/s/AKfycbwxEUJ1l2AVGY9FDjmUZBSTO0LabhXVZ8Q7YMKIZJKJk8zHKLdNeM_-zekwSTSP2lwa/exec"; // 例：'https://script.google.com/macros/s/AKfycb..../exec'
+
+const DIMS=["流程現況","數據化程度","人力與缺工","工具與自動化","老闆與團隊心態"];
+const Q=[
+ {d:0,t:"你公司日常最關鍵的作業流程（出貨／生產／接單等），目前主要怎麼記錄？",o:["沒有特別記錄，靠老員工的經驗與默契","紙本手寫表單／白板","Excel／Google 試算表，但要回辦公室開電腦才能填","已有手機就能填的數位流程，現場即時記錄"]},
+ {d:0,t:"如果今天一位資深員工臨時請假，他手上的流程別人接得起來嗎？",o:["幾乎接不起來，知識都在他腦袋裡","勉強，但會出錯、要花很多時間問","大致可以，有些步驟有文件","可以，流程有清楚的步驟與紀錄可循"]},
+ {d:0,t:"你能不能說清楚「一張單／一個訂單」從進來到完成，中間經過哪些步驟、各由誰負責？",o:["說不太清楚，每次都有點不一樣","大概知道，但沒寫下來","知道，口頭講得出來","有畫成流程／有 SOP，新人看得懂"]},
+ {d:1,t:"你做決策（要不要進貨、要不要加人、哪個品項要推）時，主要依據是什麼？",o:["憑感覺與經驗","事後回想大概的狀況","翻得到一些紀錄，但要花時間整理","看得到即時或定期的數據報表"]},
+ {d:1,t:"你公司的營運數字（訂單、庫存、工時、成本等）目前散落在幾個地方？",o:["沒在統一記錄，問人才知道","分散在很多本子／很多檔案，各記各的","集中在 1–2 個試算表，但要人工更新","進到系統／表單，更新相對自動"]},
+ {d:1,t:"當你想知道「上個月某項數字的變化」時，要花多久才拿得到？",o:["幾乎拿不到","要請人花半天到一天去湊","一兩小時內整理得出來","隨時打開就看得到"]},
+ {d:2,t:"目前公司是否有「招不到人／一直缺人」造成的卡關？",o:["嚴重缺工，很多事沒人做、老闆自己頂","缺工，靠現有人硬撐、常加班","偶爾緊張，但還能調度","人力相對穩定"]},
+ {d:2,t:"有多少例行、重複、不太需要判斷的工作，現在還是純靠人工在做？",o:["非常多，每天大量時間花在這些事上","不少","一些，但已在想辦法減少","大部分已被表單／自動化接手"]},
+ {d:2,t:"員工對於「多填一份表、多用一個系統」的接受度如何？",o:["很抗拒，給了工具也不用","要一直盯才會用","願意配合，只要不太麻煩","只要對他有幫助、夠好用，會主動用"]},
+ {d:3,t:"你公司現在有沒有在用任何自動化（自動推播、自動通知、自動串接）？",o:["完全沒有","想過但還沒做","有一點點，零星試過","有幾個自動化已經在日常運作"]},
+ {d:3,t:"你嘗試過用 AI 工具（ChatGPT 等）幫忙處理工作嗎？",o:["沒用過，也不太知道能幹嘛","自己私下玩過，但沒用在公司事務","偶爾用來寫文案／查資料","已固定用在某些實際工作環節"]},
+ {d:3,t:"你目前用的工具／系統，彼此之間的資料是相通的，還是各自獨立？",o:["各自獨立，常要重複輸入同一筆資料","大多獨立，少數靠人工搬資料","部分串得起來","主要工具之間資料相對打通"]},
+ {d:4,t:"你（老闆）對「導入 AI／自動化」這件事的態度比較接近？",o:["覺得是大公司的事，跟我無關","有興趣，但怕花錢花時間又沒效果","想做，正在找方向與切入點","已決定要做，只差怎麼開始"]},
+ {d:4,t:"如果導入過程需要你和員工一起花時間參與、邊做邊調整，你願意嗎？",o:["希望最好交給外面全包、我不用管","願意，但時間很有限","願意，也能安排團隊配合","非常願意，希望團隊能藉此長出自己的能力"]},
+ {d:4,t:"你比較認同下面哪句話？",o:["「先買最厲害的 AI 工具，再來想怎麼用」","「等同業都導了、看到效果我再跟」","「先找出最痛的一個流程，從那裡開始小步試」","「先把生意與流程弄清楚，再用數據驗證哪裡值得導 AI」"]}
+];
+const LV=[
+ {min:0,max:14,name:"L1 剛起步",state:"你的生意主要靠人的經驗與默契在跑，關鍵流程還沒有被穩定「記錄」下來。這不是壞事——很多扎實的中小企業都是這樣長大的。但這也代表：現在直接買 AI 工具，多半會卡在「沒有資料可以餵、買了也沒人用」。",next:"先別急著談 AI，先做 RACAE 的第一步——Record（紀錄）。挑一個你最有感的流程（例如出貨或生產日報），把「靠人記」換成「現場用手機就能填」的數位紀錄。先有可信的資料，後面的分析與自動化才有地基。可以從一個流程開始，帶著員工一起把它做順。"},
+ {min:15,max:26,name:"L2 有基礎",state:"你已經有一些數位紀錄，但資料散落在多個試算表或本子裡，更新靠人工，要用的時候還得花時間湊。你不缺工具，缺的是「把分散的紀錄收斂成可以看的數據」。",next:"進到 RACAE 的 Analysis（分析）——選一兩個最關鍵的數字，先讓它「隨時看得到」，再從中找出最值得動手的痛點。同時把員工最抗拒、最重複的人工步驟列出來，這些通常就是自動化的第一批人選。重點是順序：先看清楚、再決定導哪裡。"},
+ {min:27,max:37,name:"L3 可加速",state:"你的數位底子不錯，已有紀錄、有部分自動化，團隊接受度也還可以。你現在最大的機會，是把這些「點」連成「線」——讓資料在流程之間流動，並用數據驗證「哪一段導入最划算」。",next:"走到 RACAE 的 Conclusion → Assumption → Experiment：根據現有數據下結論、提出「導入哪一段會帶來最大改善」的假設，然後用一個小範圍實驗去驗證，再放大。這個階段最怕「同時做太多」，建議用陪跑的節奏，一段一段把人工流程換成 AI 代理人＋自動化，邊做邊讓團隊跟上。"},
+ {min:38,max:45,name:"L4 待整合",state:"你已經跑在前面——工具、數據、自動化都有了，團隊也願意做。你的課題不再是「要不要導」，而是「怎麼整合與規模化」，避免各部門各做各的、資料對不起來。",next:"把 RACAE 變成公司的日常循環而不是一次性專案：建立統一的數據與紀錄標準，讓不同流程的自動化能互相串接，並持續用實驗驗證下一個值得投資的環節。這個階段的價值，在於有人能站在「整體營運」的高度幫你排序與盤整，而不是只盯單一工具。"}
+];
+
+let cur=0, ans=new Array(Q.length).fill(null);
+const $=id=>document.getElementById(id);
+function setProg(n){$("prog").style.width=n+"%";}
+function start(){$("intro").classList.add("hide");$("quiz").classList.remove("hide");render();}
+function render(){
+  const q=Q[cur];
+  $("dimTag").textContent="面向："+DIMS[q.d];
+  $("qTitle").textContent="第 "+(cur+1)+" 題 / "+Q.length;
+  $("qText").textContent=q.t;
+  $("pct").textContent="第 "+(cur+1)+" 題，共 "+Q.length+" 題";
+  setProg(Math.round((cur)/Q.length*100));
+  const box=$("opts");box.innerHTML="";
+  q.o.forEach((txt,i)=>{
+    const d=document.createElement("div");
+    d.className="opt"+(ans[cur]===i?" sel":"");
+    d.textContent=txt;
+    d.onclick=()=>{ans[cur]=i;render();};
+    box.appendChild(d);
+  });
+  $("prevBtn").style.visibility=cur===0?"hidden":"visible";
+  $("nextBtn").disabled=ans[cur]===null;
+  $("nextBtn").textContent=cur===Q.length-1?"完成 →":"下一題 →";
+}
+function go(dir){
+  if(dir>0 && ans[cur]===null)return;
+  if(dir>0 && cur===Q.length-1){toGate();return;}
+  cur=Math.max(0,Math.min(Q.length-1,cur+dir));render();
+}
+function toGate(){$("quiz").classList.add("hide");$("gate").classList.remove("hide");$("qTitle").textContent="就快好了";$("dimTag").textContent="最後一步";setProg(95);}
+function backToQuiz(){$("gate").classList.add("hide");$("quiz").classList.remove("hide");render();}
+function checkEmail(){
+  const ok=/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test($("email").value)&&$("agree").checked;
+  $("seeBtn").disabled=!ok;
+}
+function calc(){
+  const dimScore=[0,0,0,0,0];let total=0;
+  Q.forEach((q,i)=>{const s=ans[i]||0;dimScore[q.d]+=s;total+=s;});
+  return {dimScore,total};
+}
+function submit(){
+  const {dimScore,total}=calc();
+  const lv=LV.find(l=>total>=l.min&&total<=l.max);
+  const payload={email:$("email").value,name:$("name").value,company:$("company").value,
+    total,level:lv.name,dims:DIMS.map((d,i)=>d+":"+dimScore[i]).join(" / "),
+    source:"ai_readiness_diagnosis",ts:new Date().toISOString()};
+  if(ENDPOINT){try{fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});}catch(e){}}
+  try{localStorage.setItem("rmm_ai_diag",JSON.stringify(payload));}catch(e){}
+  $("sendMsg").textContent="";
+  $("gate").classList.add("hide");$("result").classList.remove("hide");setProg(100);
+  $("dimTag").textContent="你的診斷結果";$("qTitle").textContent="AI 導入準備度自我診斷表";
+  $("lvlName").textContent=lv.name;$("scoreNum").textContent=total;
+  $("stateTxt").textContent=lv.state;$("nextTxt").textContent=lv.next;
+  const r=$("radar");r.innerHTML="";
+  DIMS.forEach((d,i)=>{
+    const pct=Math.round(dimScore[i]/9*100);
+    const row=document.createElement("div");row.className="row";
+    row.innerHTML='<div class="lab">'+d+'</div><div class="track"><div class="fill" style="width:'+pct+'%"></div></div><div style="width:34px;text-align:right;color:#7388a0">'+dimScore[i]+'/9</div>';
+    r.appendChild(row);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body></html>
