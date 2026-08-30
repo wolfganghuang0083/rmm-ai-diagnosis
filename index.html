@@ -63,7 +63,7 @@ input[type=email],input[type=text]{width:100%;padding:13px 14px;border:1.5px sol
     <div id="gate" class="hide">
       <span class="dim">最後一步</span>
       <div class="q">填完了！告訴我們把完整結果寄到哪裡 📩</div>
-      <p class="lede">下方會立刻顯示你的等級與下一步重點；我們也會把<b>完整的五面向細解＋對應你狀態的行動建議</b>寄到你的信箱。</p>
+      <p class="lede">下一步會顯示你的等級與分數；<b>完整的五面向細解＋行動建議</b>由 LINE 裡的 AI 助理立即為你解讀（書面版同步寄到信箱備存）。</p>
       <input type="text" id="name" placeholder="你的稱呼（選填）">
       <input type="email" id="email" placeholder="你的 Email（必填）" oninput="checkEmail()">
       <input type="text" id="company" placeholder="公司／品牌名稱（選填）">
@@ -81,16 +81,23 @@ input[type=email],input[type=text]{width:100%;padding:13px 14px;border:1.5px sol
       <div class="lvl">AI 導入準備度：<span id="lvlName"></span></div>
       <div class="lede"><span class="score" id="scoreNum"></span> ／ 45 分</div>
       <div class="radar" id="radar" style="margin:16px 0"></div>
+      <div class="cta" style="margin-top:14px">
+        <div style="font-size:17px;font-weight:700">📲 完整解讀在 LINE：AI 已拿到你的分數</div>
+        <div style="font-size:14px;color:#cfe9ff;margin-top:6px">一鍵把診斷結果帶進 LINE，AI 助理立即給你五面向細解＋以你狀態的第一步建議，狼大會親自接手後續。</div>
+        <a class="btn" id="lineCta" href="https://line.me/R/ti/p/@711oehaj" target="_blank" rel="noopener">到 LINE 領完整解讀 →</a>
+        <div style="font-size:12.5px;color:#9fc5e8;margin-top:8px">按下後 LINE 會帶入你的診斷碼與分數，直接送出即可。</div>
+      </div>
+      <div style="text-align:center;margin-top:10px"><a class="sub" href="javascript:void(0)" onclick="document.getElementById('webDetail').classList.remove('hide');this.style.display='none'">不方便用 LINE？展開網頁版完整結果</a></div>
+      <div id="webDetail" class="hide">
       <div class="q" style="font-size:15px;margin-top:8px">你現在的狀態</div>
       <p class="lede" id="stateTxt"></p>
       <div class="q" style="font-size:15px">你的下一步建議</div>
       <p class="lede" id="nextTxt"></p>
+      </div>
       <p class="lede" style="border-top:1px solid #eef3f8;padding-top:14px">這份診斷給的是方向，不是答案。真正的關鍵在於：<b>用對順序、從對的那一段開始。</b> RunningMate 的做法不是丟一份報告就走，也不是把你的事全包過去——而是先懂你的生意，再帶著你和團隊一起做，讓能力長在公司裡。</p>
-      <div class="cta">
-        <div style="font-size:17px;font-weight:700">想知道「以你目前的狀態，第一步具體該做什麼」？</div>
-        <div style="font-size:14px;color:#cfe9ff;margin-top:6px">預約一次免費諮詢，我們先聊聊你的生意，再談要不要、怎麼導 AI。</div>
-        <a class="btn" id="ctaLink" href="https://runningmatemarketing.com/consulting/?utm_source=ai_diagnosis&utm_medium=lead_magnet&utm_campaign=ai_readiness">預約諮詢 →</a>
-        <div style="margin-top:12px"><a class="sub" href="https://runningmatemarketing.com/blog/2023/12/05/racae-cycle-%e5%84%aa%e5%8c%96%e5%be%aa%e7%92%b0%e7%90%86%e8%ab%96-%e9%87%8d%e5%a1%91%e4%bc%81%e6%a5%ad%e5%b9%b4%e5%ba%a6%e7%9b%ae%e6%a8%99%e8%a6%8f%e5%8a%83/">先讀懂 RACAE 優化循環</a> ｜ <a class="sub" href="https://runningmatemarketing.com/blog/2026/06/02/enterprise-ai-coaching/">了解企業 AI 陪跑</a></div>
+      <div style="text-align:center;margin-top:14px">
+        <a class="sub" id="ctaLink" href="https://runningmatemarketing.com/consulting/?utm_source=ai_diagnosis&utm_medium=lead_magnet&utm_campaign=ai_readiness">或直接填表預約免費諮詢 →</a>
+        <div style="margin-top:6px"><a class="sub" href="https://runningmatemarketing.com/blog/2023/12/05/racae-cycle-%e5%84%aa%e5%8c%96%e5%be%aa%e7%92%b0%e7%90%86%e8%ab%96-%e9%87%8d%e5%a1%91%e4%bc%81%e6%a5%ad%e5%b9%b4%e5%ba%a6%e7%9b%ae%e6%a8%99%e8%a6%8f%e5%8a%83/">先讀懂 RACAE 優化循環</a> ｜ <a class="sub" href="https://runningmatemarketing.com/blog/2026/06/02/enterprise-ai-coaching/">了解企業 AI 陪跑</a></div>
       </div>
     </div>
   </div>
@@ -168,12 +175,15 @@ function calc(){
 function submit(){
   const {dimScore,total}=calc();
   const lv=LV.find(l=>total>=l.min&&total<=l.max);
+  const diagCode='RM-'+Math.random().toString(36).slice(2,6).toUpperCase();
   const payload={email:$("email").value,name:$("name").value,company:$("company").value,
     total,level:lv.name,dims:DIMS.map((d,i)=>d+":"+dimScore[i]).join(" / "),
-    source:"ai_readiness_diagnosis",ts:new Date().toISOString()};
+    source:"ai_readiness_diagnosis|"+diagCode,ts:new Date().toISOString()};
   if(ENDPOINT){try{fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});}catch(e){}}
   try{localStorage.setItem("rmm_ai_diag",JSON.stringify(payload));}catch(e){}
   $("sendMsg").textContent="";
+  const lineMsg='【AI導入診斷 '+diagCode+'】我的準備度：'+total+'/45（'+lv.name+'）\n'+payload.dims+'\n請給我完整解讀與下一步建議';
+  $("lineCta").href='https://line.me/R/oaMessage/%40711oehaj/?'+encodeURIComponent(lineMsg);
   $("gate").classList.add("hide");$("result").classList.remove("hide");setProg(100);
   $("dimTag").textContent="你的診斷結果";$("qTitle").textContent="AI 導入準備度自我診斷表";
   $("lvlName").textContent=lv.name;$("scoreNum").textContent=total;
